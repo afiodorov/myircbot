@@ -1,5 +1,6 @@
 var config = require('./config.js');
 var irc = require('irc');
+var spawn = require('child_process').spawn;
 
 var bot = new irc.Client(config.server, config.botName, {
       userName: config.botName,
@@ -26,8 +27,25 @@ var bot = new irc.Client(config.server, config.botName, {
 );
 
 bot.addListener('registered', function(message) {
-  console.log(message);
   bot.say('afiodorov', 'First bot ever');
+});
+
+bot.addListener('message',
+  function(nick, to, text, message) {
+    if(!message.args[1]) {
+      return;
+    }
+    var messageTxt = message.args[1];
+    var re = /:grep .*/;
+    if (messageTxt.match(re)) {
+      var args = messageTxt.split(' ');
+      args.shift();
+      args.push(config.logfile);
+      var grep = spawn('grep', args);
+      grep.stdout.on('data', function(data) {
+        bot.say(nick, data.toString());
+      });
+    }
 });
 
 var onDisconnected = function() {
