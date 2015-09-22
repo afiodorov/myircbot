@@ -27,7 +27,7 @@ var bot = new irc.Client(config.server, config.botName, {
 );
 
 bot.addListener('registered', function(message) {
-  bot.say('afiodorov', 'First bot ever');
+
 });
 
 bot.addListener('message',
@@ -40,8 +40,9 @@ bot.addListener('message',
     if (messageTxt.match(re)) {
       var args = messageTxt.split(' ');
       args.shift();
-      args.push(config.logfile);
+      args = ['-h'].concat(args).concat(config.logfiles);
       var grep = spawn('grep', args);
+      console.log('running grep ' + args.join(' '));
       grep.stdout.on('data', function(data) {
         bot.say(nick, data.toString());
       });
