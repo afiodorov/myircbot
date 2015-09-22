@@ -29,3 +29,11 @@ bot.addListener('registered', function(message) {
   console.log(message);
   bot.say('afiodorov', 'First bot ever');
 });
+
+var onDisconnected = function() {
+  process.exit();
+};
+
+process.on('SIGINT', function() {
+  bot.disconnect(onDisconnected);
+});

@@ -3,7 +3,7 @@
 Create config like
 
 ~~~
-module.export = {
+module.exports = {
   channels: ['channel1']
   server: 'irc.gitter.im',
   botName: YOURNAME,
