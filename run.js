@@ -40,7 +40,7 @@ var getDate = function() {
   };
 
   return [d.getUTCFullYear(), p(d.getUTCMonth() + 1),
-    p(d.getUTCDay())].join('-') + ' ' + [p(d.getUTCHours()),
+    p(d.getUTCDate())].join('-') + ' ' + [p(d.getUTCHours()),
       p(d.getUTCMinutes()), p(d.getUTCSeconds())].join(':') + ' UTC';
 };
 
