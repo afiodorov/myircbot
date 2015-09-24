@@ -69,8 +69,8 @@ bot.addListener('message',
       searchArgs.shift();
       searchArgs.shift();
       var searchStr = searchArgs.join(' ')
-        .replace('"', '\\"')
-        .replace('\\', '\\\\');
+        .replace(/"/g, '\\"')
+        .replace(/\\/g, '\\\\');
       quoteCmd += ' | egrep "' + dateRe + ' ' + name + '"';
       quoteCmd += ' | grep -i "' + searchStr + '"';
       quoteCmd += ' | tail -n 1';
