@@ -77,7 +77,7 @@ bot.addListener('message',
         if (error !== null) {
           console.log('exec error: ' + error);
         }
-        bot.say(nick, stdout.toString());
+        bot.say(to, stdout.toString());
       });
     }
 });
