@@ -79,6 +79,10 @@ bot.addListener('message',
         if (error !== null) {
           console.log('exec error: ' + error);
         }
+        if (to === config.botName) {
+          bot.say(nick, stdout.toString());
+          return;
+        }
         bot.say(to, stdout.toString());
       });
     }
