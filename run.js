@@ -60,6 +60,25 @@ bot.addListener('message',
         }
         bot.say(nick, stdout.toString());
       });
+    } else if (messageTxt.match(/^:quote @.*\s.*/)) {
+      var dateRe = '^\\\[[0-9]{4}-[0-9]{2}-[0-9]{2} ' +
+        '[0-9]{2}:[0-9]{2}:[0-9]{2} UTC\\\]';
+      var name = messageTxt.split(' ')[1].substring(1);
+      var quoteCmd = 'cat ' + config.gitterLog;
+      var searchArgs = messageTxt.split(' ');
+      searchArgs.shift();
+      searchArgs.shift();
+      var searchStr = searchArgs.join(' ').replace('"', '\\"');
+      quoteCmd += ' | egrep "' + dateRe + ' ' + name + '"';
+      quoteCmd += ' | grep -i "' + searchStr + '"';
+      quoteCmd += ' | tail -n 1';
+      console.log('running ' + quoteCmd);
+      exec(quoteCmd, function(error, stdout, stderr) {
+        if (error !== null) {
+          console.log('exec error: ' + error);
+        }
+        bot.say(nick, stdout.toString());
+      });
     }
 });
 
