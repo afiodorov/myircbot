@@ -45,16 +45,17 @@ var getDate = function() {
 };
 
 bot.addListener('message',
-  function(nick, to, text, message) {
-    var messageTxt = message.args.length >= 2 ? message.args[1] : '';
+  function(nick, to, messageTxt) {
     var re = /:grep .*/;
     if (messageTxt.match(re)) {
       var args = messageTxt.split(' ');
       args.shift();
-      args = ['-h'].concat(args).concat(config.logfiles);
-      args.push(config.gitterLog);
-      var grep = spawn('grep', args);
-      console.log('running grep ' + args.join(' '));
+      var grepArgs = ['-h', '-i', '-m 5'];
+      grepArgs.push(args.join(' '));
+      grepArgs = grepArgs.concat(config.logfiles);
+      grepArgs.push(config.gitterLog);
+      var grep = spawn('grep', grepArgs);
+      console.log('running grep ' + grepArgs.join(' '));
       grep.stdout.on('data', function(data) {
         console.log('sending output of grep to '  + nick);
         bot.say(nick, data.toString());
