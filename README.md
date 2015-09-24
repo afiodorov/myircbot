@@ -17,3 +17,7 @@ module.exports = {
 ~~~.shell
 node run.js
 ~~~
+
+## TODO
+
+Add some abstractions for events
