@@ -6,6 +6,10 @@ var fs = require('fs');
 var exec = require('child_process').exec;
 var date = require('./date.js');
 
+var safeEscape = function(input) {
+  return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+};
+
 var bot = new irc.Client(config.server, config.botName, {
       userName: config.botName,
       realName: config.botName,
@@ -60,19 +64,24 @@ bot.addListener('message',
         }
         bot.say(nick, stdout.toString());
       });
-    } else if (messageTxt.match(/^:quote @.*\s.*/)) {
+    } else if (messageTxt.match(/^:quote @?.*\s.*/)) {
       var dateRe = '^\\\[[0-9]{4}-[0-9]{2}-[0-9]{2} ' +
         '[0-9]{2}:[0-9]{2}:[0-9]{2} UTC\\\]';
-      var name = messageTxt.split(' ')[1].substring(1);
+
       var quoteCmd = 'cat ' + config.gitterLog;
       var searchArgs = messageTxt.split(' ');
       searchArgs.shift();
-      searchArgs.shift();
-      var searchStr = searchArgs.join(' ')
-        .replace(/\\/g, '\\\\')
-        .replace(/"/g, '\\"');
-      quoteCmd += ' | egrep "' + dateRe + ' ' + name + '"';
-      quoteCmd += ' | grep -i "' + searchStr + '"';
+
+      var potentialName = searchArgs[0];
+      var nameGiven = potentialName.substring(0, 1) === '@';
+      if (nameGiven) {
+        var name = potentialName.substring(1);
+        searchArgs.shift();
+        quoteCmd += ' | egrep "' + dateRe + ' ' + safeEscape(name) + '"';
+      }
+
+      var searchStr = searchArgs.join(' ');
+      quoteCmd += ' | grep -i "' + safeEscape(searchStr) + '"';
       quoteCmd += ' | tail -n 1';
       console.log('running ' + quoteCmd);
       exec(quoteCmd, function(error, stdout, stderr) {
