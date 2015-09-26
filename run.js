@@ -64,7 +64,7 @@ bot.addListener('message',
         }
         bot.say(nick, stdout.toString());
       });
-    } else if (messageTxt.match(/^:quote @?.*\s.*/)) {
+    } else if (messageTxt.match(/^:quote @?.*/)) {
       var dateRe = '^\\\[[0-9]{4}-[0-9]{2}-[0-9]{2} ' +
         '[0-9]{2}:[0-9]{2}:[0-9]{2} UTC\\\]';
 
