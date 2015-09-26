@@ -11,6 +11,10 @@ module.exports = {
 };
 ~~~
 
+## Abilities
+
+![links](https://raw.githubusercontent.com/afiodorov/myircbot/master/links%20today.png)
+
 
 ## Running
 
