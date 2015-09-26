@@ -78,6 +78,8 @@ bot.addListener('message',
         var name = potentialName.substring(1);
         searchArgs.shift();
         quoteCmd += ' | egrep "' + dateRe + ' ' + safeEscape(name) + '"';
+      } else {
+        quoteCmd += ' | grep -v ":quote "';
       }
 
       var searchStr = searchArgs.join(' ');
