@@ -1,14 +1,12 @@
+'use strict';
+/*jslint node: true*/
+
 var config = require('./config.js');
 var irc = require('irc');
-var spawn = require('child_process').spawn;
 var stdin = process.openStdin();
 var fs = require('fs');
-var exec = require('child_process').exec;
 var date = require('./date.js');
-
-var safeEscape = function(input) {
-  return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-};
+var evenHandler = require('./eventHandler.js');
 
 var bot = new irc.Client(config.server, config.botName, {
       userName: config.botName,
@@ -34,73 +32,20 @@ var bot = new irc.Client(config.server, config.botName, {
     }
 );
 
+/*jslint unparam: true*/
 bot.addListener('registered', function(message) {
-
+  evenHandler.setBot(bot);
 });
+/*jslint unparam: false*/
 
 bot.addListener('message',
   function(nick, to, messageTxt) {
-    var re = /:grep .*/;
-    if (messageTxt.match(re)) {
-      var args = messageTxt.split(' ');
-      args.shift();
-      var grepArgs = ['-h', '-i', '-m 5'];
-      grepArgs.push(args.join(' '));
-      grepArgs = grepArgs.concat(config.logfiles);
-      grepArgs.push(config.gitterLog);
-      var grep = spawn('grep', grepArgs);
-      console.log('running grep ' + grepArgs.join(' '));
-      grep.stdout.on('data', function(data) {
-        console.log('sending output of grep to ' + nick);
-        bot.say(nick, data.toString());
-      });
+    if (messageTxt.match(/^:grep .*/)) {
+      evenHandler.grep(nick, to, messageTxt);
     } else if (messageTxt.match(/^:links today$/)) {
-      todaysLinksCmd = 'cat ' + config.gitterLog;
-      todaysLinksCmd += ' | egrep "^\\\[' + date.getDateWihoutTime() + '" ';
-      todaysLinksCmd += ' | egrep -o "(mailto|ftp|http(s)?://){1}[^\'\\\")]+"';
-      exec(todaysLinksCmd, function(error, stdout, stderr) {
-        if (error !== null) {
-          console.log('exec error: ' + error);
-        }
-        bot.say(nick, stdout.toString());
-      });
+      evenHandler.links(nick, to, messageTxt);
     } else if (messageTxt.match(/^:quote @?.*/)) {
-      var dateRe = '^\\\[[0-9]{4}-[0-9]{2}-[0-9]{2} ' +
-        '[0-9]{2}:[0-9]{2}:[0-9]{2} UTC\\\]';
-
-      var quoteCmd = 'cat ' + config.gitterLog;
-      var searchArgs = messageTxt.split(' ');
-      searchArgs.shift();
-
-      var potentialName = searchArgs[0];
-      var nameGiven = potentialName.substring(0, 1) === '@';
-      if (nameGiven) {
-        var name = potentialName.substring(1);
-        searchArgs.shift();
-        quoteCmd += ' | egrep "' + dateRe + ' ' + safeEscape(name) + '"';
-      } else {
-        quoteCmd += ' | grep -v ":quote "';
-      }
-
-      var searchStr = searchArgs.join(' ');
-      quoteCmd += ' | grep -i "' + safeEscape(searchStr) + '"';
-      quoteCmd += ' | tail -n 1';
-      console.log('running ' + quoteCmd);
-      exec(quoteCmd, function(error, stdout, stderr) {
-        if (error !== null) {
-          console.log('exec error: ' + error);
-        }
-        quote = stdout.toString();
-        if (!quote) {
-          return;
-        }
-        var msg = '> ' + quote;
-        if (to === config.botName) {
-          bot.say(nick, msg);
-          return;
-        }
-        bot.say(to, msg);
-      });
+      evenHandler.quote(nick, to, messageTxt);
     }
 });
 
