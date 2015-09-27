@@ -16,7 +16,7 @@ var setBot = function(bot_) {
 
 var links = function(nick, to, rawCommand) {
   var todaysLinksCmd = 'cat ' + config.gitterLog;
-  todaysLinksCmd += ' | egrep "^\\[' + date.getDateWihoutTime() + '" ';
+  todaysLinksCmd += ' | egrep "^\\\\[' + date.getDateWihoutTime() + '" ';
   todaysLinksCmd += ' | egrep -o "(mailto|ftp|http(s)?://){1}[^\'\\\")]+"';
   exec(todaysLinksCmd, function(error, stdout, stderr) {
     if (error !== null) {
@@ -47,7 +47,7 @@ var grep = function(nick, to, rawCommand) {
 
 var quote = function(nick, to, rawCommand) {
       var dateRe = '^\\[[0-9]{4}-[0-9]{2}-[0-9]{2} ' +
-        '[0-9]{2}:[0-9]{2}:[0-9]{2} UTC\\]'; // jslint ignore:line
+        '[0-9]{2}:[0-9]{2}:[0-9]{2} UTC\\]';
 
       var quoteCmd = 'cat ' + config.gitterLog;
       var searchArgs = rawCommand.split(' ');
