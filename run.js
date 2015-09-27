@@ -90,7 +90,11 @@ bot.addListener('message',
         if (error !== null) {
           console.log('exec error: ' + error);
         }
-        var msg = '> ' + stdout.toString();
+        quote = stdout.toString();
+        if (!quote) {
+          return;
+        }
+        var msg = '> ' + quote;
         if (to === config.botName) {
           bot.say(nick, msg);
           return;
