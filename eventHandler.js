@@ -118,7 +118,7 @@ var translate = function(nick, to, rawCommand) {
 var privateTranslate = function(nick, to, rawCommand) {
 
   var params = {
-    text: rawCommand.substring(0, rawCommand.length - 4),
+    text: rawCommand.substring(0, rawCommand.length - 5),
     from: 'en',
     to: rawCommand.substring(rawCommand.length - 2, rawCommand.length)
   };
