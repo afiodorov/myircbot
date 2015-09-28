@@ -7,6 +7,7 @@ var exec = require('child_process').exec;
 var config = require('./config.js');
 var spawn = require('child_process').spawn;
 var date = require('./date.js');
+var MsTranslator = require('mstranslator');
 
 var bot = null;
 
@@ -90,10 +91,37 @@ var quote = function(nick, to, rawCommand) {
       });
 };
 
+var bing = new MsTranslator(config.bing, true);
+
+var translate = function(nick, to, rawCommand) {
+
+  var args = rawCommand.split(' ');
+  var fromTo = args[0];
+  args.shift();
+
+  var params = {
+    text: args.join(' '),
+    from: fromTo.substring(1, 3),
+    to: fromTo.substring(5, 7)
+  };
+
+  bing.initialize_token(function(keys) {
+    bing.translate(params, function(err, msg) {
+      console.log('Bing translate with params ' + JSON.stringify(params));
+      if (to === config.botName) {
+        bot.say(nick, msg);
+        return;
+      }
+      bot.say(to, msg);
+    });
+  });
+};
+
 /** **/
 module.exports = {
   setBot: setBot,
   quote: quote,
   links: links,
-  grep: grep
+  grep: grep,
+  translate: translate
 };

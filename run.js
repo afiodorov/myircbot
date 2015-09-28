@@ -5,8 +5,8 @@ var config = require('./config.js');
 var irc = require('irc');
 var stdin = process.openStdin();
 var fs = require('fs');
-var date = require('./date.js');
 var evenHandler = require('./eventHandler.js');
+var date = require('./date.js');
 
 var bot = new irc.Client(config.server, config.botName, {
       userName: config.botName,
@@ -46,6 +46,8 @@ bot.addListener('message',
       evenHandler.links(nick, to, messageTxt);
     } else if (messageTxt.match(/^:quote @?.*/)) {
       evenHandler.quote(nick, to, messageTxt);
+    } else if (messageTxt.match(/^:[a-z]{2}->[a-z]{2} .*/)) {
+      evenHandler.translate(nick, to, messageTxt);
     }
 });
 
