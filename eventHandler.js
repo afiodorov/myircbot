@@ -115,13 +115,28 @@ var translate = function(nick, to, rawCommand) {
   });
 };
 
+var privateTranslate = function(nick, to, rawCommand) {
+
+  var params = {
+    text: rawCommand.substring(0, rawCommand.length - 4),
+    from: 'en',
+    to: rawCommand.substring(rawCommand.length - 2, rawCommand.length)
+  };
+
+  bing.translate(params, function(err, msg) {
+    console.log('Bing translate with params ' + JSON.stringify(params));
+      bot.say(nick, msg);
+  });
+};
+
 /** **/
 module.exports = {
   setBot: setBot,
   quote: quote,
   links: links,
   grep: grep,
-  translate: translate
+  translate: translate,
+  privateTranslate: privateTranslate
 };
 
 process.on('uncaughtException', function(err) {

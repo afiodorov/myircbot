@@ -48,6 +48,8 @@ bot.addListener('message',
       evenHandler.quote(nick, to, messageTxt);
     } else if (messageTxt.match(/^:[a-z]{2}->[a-z]{2} .*/)) {
       evenHandler.translate(nick, to, messageTxt);
+    } else if (messageTxt.match(/.* :[a-z]{2}$/)) {
+      evenHandler.privateTranslate(nick, to, messageTxt);
     }
 });
 
