@@ -105,15 +105,13 @@ var translate = function(nick, to, rawCommand) {
     to: fromTo.substring(5, 7)
   };
 
-  bing.initialize_token(function(keys) {
-    bing.translate(params, function(err, msg) {
-      console.log('Bing translate with params ' + JSON.stringify(params));
-      if (to === config.botName) {
-        bot.say(nick, msg);
-        return;
-      }
-      bot.say(to, msg);
-    });
+  bing.translate(params, function(err, msg) {
+    console.log('Bing translate with params ' + JSON.stringify(params));
+    if (to === config.botName) {
+      bot.say(nick, msg);
+      return;
+    }
+    bot.say(to, msg);
   });
 };
 
